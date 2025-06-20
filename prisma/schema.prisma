@@ -1,0 +1,163 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  OWNER
+  STAFF
+}
+
+model User {
+  id       String     @id @default(uuid())
+  fullName String
+  email    String     @unique
+  password String
+  role     UserRole
+  status   Boolean
+  balance  Decimal
+  avatar   String
+  Salary   Salary[]
+  Product  Product[]
+  Partners Partners[]
+  Buy      Buy[]
+  Contract Contract[]
+  Payment  Payment[]
+}
+
+model Category {
+  id       String    @id @default(uuid())
+  title    String
+  time     DateTime
+  isActive Boolean
+  image    String
+  Product  Product[]
+}
+
+enum ProductUtils {
+  KG
+  LITR
+  M2
+  PIECE
+}
+
+model Product {
+  id         String       @id @default(uuid())
+  title      String
+  sellPrice  Decimal
+  buyPrice   Decimal
+  quantity   Int
+  categoryId String
+  category   Category     @relation(fields: [categoryId], references: [id])
+  utils      ProductUtils
+  userId     String
+  user       User         @relation(fields: [userId], references: [id])
+  isActive   Boolean
+  comment    String
+  image      String
+  Buy        Buy[]
+  Contract   Contract[]
+}
+
+model Salary {
+  id      String  @id @default(uuid())
+  userId  String
+  user    User    @relation(fields: [userId], references: [id])
+  amount  Decimal
+  comment String
+}
+
+enum PartnerRole {
+  SELLER
+  CUSTOMER
+}
+
+model Partners {
+  id          String      @id @default(uuid())
+  fullName    String
+  phoneNumber String      @unique
+  password    String
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  isActive    Boolean
+  balance     Decimal
+  role        PartnerRole
+  address     String
+  Buy         Buy[]
+  Payment     Payment[]
+  Contract    Contract[]
+}
+
+model Buy {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  partnerId String
+  partner   Partners @relation(fields: [partnerId], references: [id])
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  buyPrice  Decimal
+  comment   String
+}
+
+model Contract {
+  id            String          @id @default(uuid())
+  partnerId     String
+  partner       Partners        @relation(fields: [partnerId], references: [id])
+  productId     String
+  product       Product         @relation(fields: [productId], references: [id])
+  userId        String
+  user          User            @relation(fields: [userId], references: [id])
+  quantity      Int
+  sellPrice     Decimal
+  time          DateTime
+  Debt          Debt[]
+  ReturnProduct ReturnProduct[]
+}
+
+model Debt {
+  id         String    @id @default(uuid())
+  contractId String
+  contract   Contract  @relation(fields: [contractId], references: [id])
+  total      Decimal
+  time       DateTime
+  Payment    Payment[]
+}
+
+model ReturnProduct {
+  id         String   @id @default(uuid())
+  contractId String
+  contract   Contract @relation(fields: [contractId], references: [id])
+  isNew      Boolean
+  reason     String
+}
+
+enum PaymentPyte {
+  CASH
+  CARD
+}
+
+model Payment {
+  id          String      @id @default(uuid())
+  partnerId   String
+  partner     Partners    @relation(fields: [partnerId], references: [id])
+  debtId      String
+  debt        Debt        @relation(fields: [debtId], references: [id])
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  amount      Decimal
+  comment     String
+  paymentType PaymentPyte
+}
