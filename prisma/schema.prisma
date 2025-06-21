@@ -19,14 +19,19 @@ enum UserRole {
   STAFF
 }
 
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
 model User {
   id       String     @id @default(uuid())
   fullName String
   email    String     @unique
   password String
   role     UserRole
-  status   Boolean
-  balance  Decimal
+  status   UserStatus @default(INACTIVE)
+  balance  Decimal    @default(0)
   avatar   String
   Salary   Salary[]
   Product  Product[]
@@ -34,6 +39,17 @@ model User {
   Buy      Buy[]
   Contract Contract[]
   Payment  Payment[]
+  Sessions Sessions[]
+}
+
+model Sessions {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  ipAddress  String
+  deviceInfo String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model Category {

@@ -1,16 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Decimal } from '@prisma/client/runtime/library';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsNumber,
-  IsPositive,
-  IsString,
-} from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export enum UserRole {
   OWNER = 'OWNER',
   STAFF = 'STAFF',
+}
+
+export enum UserStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
 }
 
 export class RegisterDto {
@@ -30,7 +29,7 @@ export class RegisterDto {
   @IsNotEmpty({ message: 'Password is required!' })
   password: string;
 
-  @ApiProperty({ example: 'Your avatar image url' })
+  @ApiProperty({ example: 'your avatar image url' })
   @IsString()
   @IsNotEmpty()
   avatar: string;
@@ -39,12 +38,4 @@ export class RegisterDto {
   @IsString({ message: 'Role must be a string!' })
   @IsNotEmpty({ message: 'Role is required!' })
   role: UserRole;
-
-  status: boolean;
-
-  @ApiProperty({ example: 0 })
-  @IsNotEmpty()
-  @IsNumber()
-  @IsPositive({ message: 'Balance must be a positive number!' })
-  balance: Decimal;
 }

@@ -7,8 +7,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('The TrustPay platform')
-    .setDescription('The TrustPay platform API description')
+    .setTitle('The TrustPay Platform')
+    .setDescription('The TrustPay Platform API description')
     .setVersion('1.0')
     .addSecurityRequirements('bearer', ['bearer'])
     .addBearerAuth()
@@ -16,7 +16,7 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs/api', app, documentFactory);
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
   await app.listen(process.env.PORT ?? 3000);
   console.log(`Server is successfully started on port: ${process.env.PORT}`);

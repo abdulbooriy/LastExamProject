@@ -2,6 +2,9 @@
 CREATE TYPE "UserRole" AS ENUM ('OWNER', 'STAFF');
 
 -- CreateEnum
+CREATE TYPE "UserStatus" AS ENUM ('ACTIVE', 'INACTIVE');
+
+-- CreateEnum
 CREATE TYPE "ProductUtils" AS ENUM ('KG', 'LITR', 'M2', 'PIECE');
 
 -- CreateEnum
@@ -17,8 +20,8 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role" "UserRole" NOT NULL,
-    "status" BOOLEAN NOT NULL,
-    "balance" DECIMAL(65,30) NOT NULL,
+    "status" "UserStatus" NOT NULL DEFAULT 'INACTIVE',
+    "balance" DECIMAL(65,30) NOT NULL DEFAULT 0,
     "avatar" TEXT NOT NULL,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
