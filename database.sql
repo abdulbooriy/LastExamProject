@@ -1,0 +1,2 @@
+-- Active: 1740380082978@@127.0.0.1@5432@trustpay
+INSERT INTO "Users" ("id", "fullName", "email", "password", "role", "avatar") VALUES ('2', 'Ali Valiyev', 'admin@gmail.com', '12345', 'STAFF', '1750584740716.png'

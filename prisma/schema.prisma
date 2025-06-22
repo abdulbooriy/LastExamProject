@@ -24,10 +24,10 @@ enum UserStatus {
   INACTIVE
 }
 
-model User {
+model Users {
   id       String     @id @default(uuid())
   fullName String
-  email    String     @unique
+  phone    String     @unique
   password String
   role     UserRole
   status   UserStatus @default(INACTIVE)
@@ -39,29 +39,18 @@ model User {
   Buy      Buy[]
   Contract Contract[]
   Payment  Payment[]
-  Sessions Sessions[]
-}
-
-model Sessions {
-  id         String   @id @default(uuid())
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
-  ipAddress  String
-  deviceInfo String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
 }
 
 model Category {
   id       String    @id @default(uuid())
   title    String
-  time     DateTime
+  time     Int
   isActive Boolean
   image    String
   Product  Product[]
 }
 
-enum ProductUtils {
+enum ProductUnits {
   KG
   LITR
   M2
@@ -76,9 +65,9 @@ model Product {
   quantity   Int
   categoryId String
   category   Category     @relation(fields: [categoryId], references: [id])
-  utils      ProductUtils
+  units      ProductUnits
   userId     String
-  user       User         @relation(fields: [userId], references: [id])
+  user       Users        @relation(fields: [userId], references: [id])
   isActive   Boolean
   comment    String
   image      String
@@ -89,7 +78,7 @@ model Product {
 model Salary {
   id      String  @id @default(uuid())
   userId  String
-  user    User    @relation(fields: [userId], references: [id])
+  user    Users   @relation(fields: [userId], references: [id])
   amount  Decimal
   comment String
 }
@@ -100,25 +89,24 @@ enum PartnerRole {
 }
 
 model Partners {
-  id          String      @id @default(uuid())
-  fullName    String
-  phoneNumber String      @unique
-  password    String
-  userId      String
-  user        User        @relation(fields: [userId], references: [id])
-  isActive    Boolean
-  balance     Decimal
-  role        PartnerRole
-  address     String
-  Buy         Buy[]
-  Payment     Payment[]
-  Contract    Contract[]
+  id       String      @id @default(uuid())
+  fullName String
+  phone    String      @unique
+  userId   String
+  user     Users       @relation(fields: [userId], references: [id])
+  isActive Boolean
+  balance  Decimal
+  role     PartnerRole
+  address  String
+  Buy      Buy[]
+  Payment  Payment[]
+  Contract Contract[]
 }
 
 model Buy {
   id        String   @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      Users    @relation(fields: [userId], references: [id])
   partnerId String
   partner   Partners @relation(fields: [partnerId], references: [id])
   productId String
@@ -135,10 +123,10 @@ model Contract {
   productId     String
   product       Product         @relation(fields: [productId], references: [id])
   userId        String
-  user          User            @relation(fields: [userId], references: [id])
+  user          Users           @relation(fields: [userId], references: [id])
   quantity      Int
   sellPrice     Decimal
-  time          DateTime
+  time          Int
   Debt          Debt[]
   ReturnProduct ReturnProduct[]
 }
@@ -148,7 +136,7 @@ model Debt {
   contractId String
   contract   Contract  @relation(fields: [contractId], references: [id])
   total      Decimal
-  time       DateTime
+  time       Int
   Payment    Payment[]
 }
 
@@ -172,7 +160,7 @@ model Payment {
   debtId      String
   debt        Debt        @relation(fields: [debtId], references: [id])
   userId      String
-  user        User        @relation(fields: [userId], references: [id])
+  user        Users       @relation(fields: [userId], references: [id])
   amount      Decimal
   comment     String
   paymentType PaymentPyte
