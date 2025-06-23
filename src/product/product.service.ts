@@ -30,7 +30,7 @@ export class ProductService {
         data: createProductDto,
       });
 
-      return { products };
+      return products;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -39,7 +39,7 @@ export class ProductService {
   async findAll() {
     try {
       const products = await this.prisma.product.findMany();
-      return { products };
+      return products;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -50,7 +50,7 @@ export class ProductService {
       const product = await this.prisma.product.findFirst({ where: { id } });
       if (!product) throw new NotFoundException('Product not found!');
 
-      return { product };
+      return product;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -72,7 +72,7 @@ export class ProductService {
         console.log(e ? e.message : 'product image deleted!');
       });
 
-      return { new_product };
+      return new_product;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

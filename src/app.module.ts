@@ -10,6 +10,7 @@ import { UploadImageModule } from './upload-image/upload-image.module';
 import { JwtModule } from '@nestjs/jwt';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
+import { SalaryModule } from './salary/salary.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ProductModule } from './product/product.module';
     }),
     CategoryModule,
     ProductModule,
+    SalaryModule,
   ],
   controllers: [],
   providers: [],

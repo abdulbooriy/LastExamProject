@@ -10,6 +10,7 @@ import {
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ApiBody, ApiExtraModels } from '@nestjs/swagger';
 
 @Controller('category')
 export class CategoryController {

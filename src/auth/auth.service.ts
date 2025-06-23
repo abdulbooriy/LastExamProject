@@ -20,35 +20,31 @@ export class AuthService {
     }
   }
 
-  async login(loginDto: LoginDto, request: Request) {
+  async login(loginDto: LoginDto) {
     try {
       const checkUser = await this.finduser(loginDto.phone);
       if (!checkUser) throw new BadRequestException('Wrong PhoneNumber!');
 
-      if (checkUser.password == loginDto.password) {
-        if (checkUser.status == 'INACTIVE') {
-          await this.prisma.users.update({
-            data: { status: 'ACTIVE' },
-            where: { phone: checkUser.phone },
-          });
-        }
+      const checkPassword = await bcrypt.compare(
+        loginDto.password,
+        checkUser.password,
+      );
 
-        await bcrypt.hash(loginDto.password, 10);
+      console.log(checkPassword);
 
-        let access_token = await this.generateAccesstoken({
-          id: checkUser.id,
-          role: checkUser.role,
-        });
+      if (!checkPassword) throw new BadRequestException('Wrong Password!');
 
-        let refresh_token = await this.generateRefreshToken({
-          id: checkUser.id,
-          role: checkUser.role,
-        });
+      let access_token = await this.generateAccesstoken({
+        id: checkUser.id,
+        role: checkUser.role,
+      });
 
-        return { access_token, refresh_token };
-      } else {
-        throw new BadRequestException('Wrong Password!');
-      }
+      let refresh_token = await this.generateRefreshToken({
+        id: checkUser.id,
+        role: checkUser.role,
+      });
+
+      return { access_token, refresh_token };
     } catch (error) {
       throw new BadRequestException(error.message);
     }

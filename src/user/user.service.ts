@@ -8,19 +8,50 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { join } from 'path';
 import * as fs from 'fs';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto) {
+    try {
+      const checkUser = await this.prisma.users.findUnique({
+        where: { phone: createUserDto.phone },
+      });
+
+      if (checkUser)
+        throw new BadRequestException(
+          `This ${checkUser?.phone} PhoneNumber is already in use!`,
+        );
+
+      if (createUserDto.role === 'OWNER') {
+        const checkUserRole = await this.prisma.users.findFirst({
+          where: { role: 'OWNER' },
+        });
+
+        if (checkUserRole)
+          throw new BadRequestException(
+            `This ${checkUserRole?.role} role is already in use!`,
+          );
+      }
+
+      const hashPass = await bcrypt.hash(createUserDto.password, 10);
+
+      const new_user = await this.prisma.users.create({
+        data: { ...createUserDto, password: hashPass },
+      });
+
+      return { message: 'User is created successfully!', data: new_user };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
   async findAll() {
     try {
       const users = await this.prisma.users.findMany();
-      return { users };
+      return users;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -39,6 +70,15 @@ export class UserService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
+      const user = await this.prisma.users.findFirst({ where: { id } });
+      if (!user) throw new NotFoundException('User not found!');
+
+      const new_user = await this.prisma.users.update({
+        data: updateUserDto,
+        where: { id },
+      });
+
+      return { message: 'User is successfully updated!', data: new_user };
     } catch (error) {
       throw new BadRequestException(error.message);
     }

@@ -15,7 +15,7 @@ export class CategoryService {
         data: createCategoryDto,
       });
 
-      return { categories };
+      return categories;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -24,7 +24,7 @@ export class CategoryService {
   async findAll() {
     try {
       const categories = await this.prisma.category.findMany();
-      return { categories };
+      return categories;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -35,7 +35,7 @@ export class CategoryService {
       const category = await this.prisma.category.findFirst({ where: { id } });
       if (!category) throw new BadRequestException('Category not found!');
 
-      return { category };
+      return category;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

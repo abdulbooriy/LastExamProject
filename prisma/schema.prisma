@@ -30,7 +30,7 @@ model Users {
   phone    String     @unique
   password String
   role     UserRole
-  status   UserStatus @default(INACTIVE)
+  status   UserStatus @default(ACTIVE)
   balance  Decimal    @default(0)
   avatar   String
   Salary   Salary[]
@@ -76,11 +76,12 @@ model Product {
 }
 
 model Salary {
-  id      String  @id @default(uuid())
-  userId  String
-  user    Users   @relation(fields: [userId], references: [id])
-  amount  Decimal
-  comment String
+  id        String   @id @default(uuid())
+  userId    String
+  user      Users    @relation(fields: [userId], references: [id])
+  amount    Decimal
+  comment   String?
+  createdAt DateTime @default(now())
 }
 
 enum PartnerRole {

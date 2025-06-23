@@ -5,7 +5,7 @@ CREATE TYPE "UserRole" AS ENUM ('OWNER', 'STAFF');
 CREATE TYPE "UserStatus" AS ENUM ('ACTIVE', 'INACTIVE');
 
 -- CreateEnum
-CREATE TYPE "ProductUtils" AS ENUM ('KG', 'LITR', 'M2', 'PIECE');
+CREATE TYPE "ProductUnits" AS ENUM ('KG', 'LITR', 'M2', 'PIECE');
 
 -- CreateEnum
 CREATE TYPE "PartnerRole" AS ENUM ('SELLER', 'CUSTOMER');
@@ -17,10 +17,10 @@ CREATE TYPE "PaymentPyte" AS ENUM ('CASH', 'CARD');
 CREATE TABLE "Users" (
     "id" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "role" "UserRole" NOT NULL,
-    "status" "UserStatus" NOT NULL DEFAULT 'INACTIVE',
+    "status" "UserStatus" NOT NULL DEFAULT 'ACTIVE',
     "balance" DECIMAL(65,30) NOT NULL DEFAULT 0,
     "avatar" TEXT NOT NULL,
 
@@ -28,22 +28,10 @@ CREATE TABLE "Users" (
 );
 
 -- CreateTable
-CREATE TABLE "Sessions" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "ipAddress" TEXT NOT NULL,
-    "deviceInfo" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Sessions_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "Category" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "time" TIMESTAMP(3) NOT NULL,
+    "time" INTEGER NOT NULL,
     "isActive" BOOLEAN NOT NULL,
     "image" TEXT NOT NULL,
 
@@ -58,7 +46,7 @@ CREATE TABLE "Product" (
     "buyPrice" DECIMAL(65,30) NOT NULL,
     "quantity" INTEGER NOT NULL,
     "categoryId" TEXT NOT NULL,
-    "utils" "ProductUtils" NOT NULL,
+    "units" "ProductUnits" NOT NULL,
     "userId" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL,
     "comment" TEXT NOT NULL,
@@ -72,7 +60,8 @@ CREATE TABLE "Salary" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "amount" DECIMAL(65,30) NOT NULL,
-    "comment" TEXT NOT NULL,
+    "comment" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Salary_pkey" PRIMARY KEY ("id")
 );
@@ -81,8 +70,7 @@ CREATE TABLE "Salary" (
 CREATE TABLE "Partners" (
     "id" TEXT NOT NULL,
     "fullName" TEXT NOT NULL,
-    "phoneNumber" TEXT NOT NULL,
-    "password" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "isActive" BOOLEAN NOT NULL,
     "balance" DECIMAL(65,30) NOT NULL,
@@ -113,7 +101,7 @@ CREATE TABLE "Contract" (
     "userId" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
     "sellPrice" DECIMAL(65,30) NOT NULL,
-    "time" TIMESTAMP(3) NOT NULL,
+    "time" INTEGER NOT NULL,
 
     CONSTRAINT "Contract_pkey" PRIMARY KEY ("id")
 );
@@ -123,7 +111,7 @@ CREATE TABLE "Debt" (
     "id" TEXT NOT NULL,
     "contractId" TEXT NOT NULL,
     "total" DECIMAL(65,30) NOT NULL,
-    "time" TIMESTAMP(3) NOT NULL,
+    "time" INTEGER NOT NULL,
 
     CONSTRAINT "Debt_pkey" PRIMARY KEY ("id")
 );
@@ -152,13 +140,10 @@ CREATE TABLE "Payment" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Users_email_key" ON "Users"("email");
+CREATE UNIQUE INDEX "Users_phone_key" ON "Users"("phone");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Partners_phoneNumber_key" ON "Partners"("phoneNumber");
-
--- AddForeignKey
-ALTER TABLE "Sessions" ADD CONSTRAINT "Sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+CREATE UNIQUE INDEX "Partners_phone_key" ON "Partners"("phone");
 
 -- AddForeignKey
 ALTER TABLE "Product" ADD CONSTRAINT "Product_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
