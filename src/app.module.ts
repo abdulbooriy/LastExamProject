@@ -11,6 +11,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { CategoryModule } from './category/category.module';
 import { ProductModule } from './product/product.module';
 import { SalaryModule } from './salary/salary.module';
+import { PurchaseModule } from './purchase/purchase.module';
+import { PartnerModule } from './partner/partner.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { SalaryModule } from './salary/salary.module';
     CategoryModule,
     ProductModule,
     SalaryModule,
+    PurchaseModule,
+    PartnerModule,
   ],
   controllers: [],
   providers: [],

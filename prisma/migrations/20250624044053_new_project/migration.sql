@@ -13,6 +13,9 @@ CREATE TYPE "PartnerRole" AS ENUM ('SELLER', 'CUSTOMER');
 -- CreateEnum
 CREATE TYPE "PaymentPyte" AS ENUM ('CASH', 'CARD');
 
+-- CreateEnum
+CREATE TYPE "Type" AS ENUM ('IN', 'OUT');
+
 -- CreateTable
 CREATE TABLE "Users" (
     "id" TEXT NOT NULL,
@@ -81,7 +84,7 @@ CREATE TABLE "Partners" (
 );
 
 -- CreateTable
-CREATE TABLE "Buy" (
+CREATE TABLE "Purchase" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "partnerId" TEXT NOT NULL,
@@ -90,7 +93,7 @@ CREATE TABLE "Buy" (
     "buyPrice" DECIMAL(65,30) NOT NULL,
     "comment" TEXT NOT NULL,
 
-    CONSTRAINT "Buy_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Purchase_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -135,6 +138,7 @@ CREATE TABLE "Payment" (
     "amount" DECIMAL(65,30) NOT NULL,
     "comment" TEXT NOT NULL,
     "paymentType" "PaymentPyte" NOT NULL,
+    "type" "Type" NOT NULL,
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
 );
@@ -158,13 +162,13 @@ ALTER TABLE "Salary" ADD CONSTRAINT "Salary_userId_fkey" FOREIGN KEY ("userId") 
 ALTER TABLE "Partners" ADD CONSTRAINT "Partners_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Buy" ADD CONSTRAINT "Buy_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Purchase" ADD CONSTRAINT "Purchase_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Buy" ADD CONSTRAINT "Buy_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "Partners"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Purchase" ADD CONSTRAINT "Purchase_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "Partners"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Buy" ADD CONSTRAINT "Buy_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Purchase" ADD CONSTRAINT "Purchase_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Contract" ADD CONSTRAINT "Contract_partnerId_fkey" FOREIGN KEY ("partnerId") REFERENCES "Partners"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

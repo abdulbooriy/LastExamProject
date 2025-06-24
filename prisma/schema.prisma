@@ -36,7 +36,7 @@ model Users {
   Salary   Salary[]
   Product  Product[]
   Partners Partners[]
-  Buy      Buy[]
+  Purchase Purchase[]
   Contract Contract[]
   Payment  Payment[]
 }
@@ -71,7 +71,7 @@ model Product {
   isActive   Boolean
   comment    String
   image      String
-  Buy        Buy[]
+  Purchase   Purchase[]
   Contract   Contract[]
 }
 
@@ -99,12 +99,12 @@ model Partners {
   balance  Decimal
   role     PartnerRole
   address  String
-  Buy      Buy[]
+  Purchase Purchase[]
   Payment  Payment[]
   Contract Contract[]
 }
 
-model Buy {
+model Purchase {
   id        String   @id @default(uuid())
   userId    String
   user      Users    @relation(fields: [userId], references: [id])
@@ -154,6 +154,11 @@ enum PaymentPyte {
   CARD
 }
 
+enum Type {
+  IN
+  OUT
+}
+
 model Payment {
   id          String      @id @default(uuid())
   partnerId   String
@@ -165,4 +170,5 @@ model Payment {
   amount      Decimal
   comment     String
   paymentType PaymentPyte
+  type        Type
 }

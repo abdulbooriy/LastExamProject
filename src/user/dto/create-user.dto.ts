@@ -35,9 +35,6 @@ export class CreateUserDto {
 
   status: UserStatus.ACTIVE;
 
-  @ApiProperty({ default: 0 })
-  balance: Decimal;
-
   @ApiProperty({ example: 'user avatar image url' })
   @IsString()
   @IsNotEmpty()

@@ -3,7 +3,6 @@ import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +28,7 @@ export class AuthService {
         loginDto.password,
         checkUser.password,
       );
-
+      console.log(loginDto.password);
       console.log(checkPassword);
 
       if (!checkPassword) throw new BadRequestException('Wrong Password!');

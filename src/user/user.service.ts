@@ -25,24 +25,13 @@ export class UserService {
           `This ${checkUser?.phone} PhoneNumber is already in use!`,
         );
 
-      if (createUserDto.role === 'OWNER') {
-        const checkUserRole = await this.prisma.users.findFirst({
-          where: { role: 'OWNER' },
-        });
-
-        if (checkUserRole)
-          throw new BadRequestException(
-            `This ${checkUserRole?.role} role is already in use!`,
-          );
-      }
-
       const hashPass = await bcrypt.hash(createUserDto.password, 10);
 
       const new_user = await this.prisma.users.create({
         data: { ...createUserDto, password: hashPass },
       });
 
-      return { message: 'User is created successfully!', data: new_user };
+      return { message: 'User created successfully!', data: new_user };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
