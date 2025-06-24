@@ -20,14 +20,12 @@ export class CreatePurchaseDto {
 
   @ApiProperty({ example: 0 })
   @IsNumber()
-  @IsPositive()
   @Type(() => Number)
   @IsNotEmpty()
   quantity: number;
 
   @ApiProperty({ example: 0 })
   @IsNumber()
-  @IsPositive()
   @Type(() => Number)
   @IsNotEmpty()
   buyPrice: number;

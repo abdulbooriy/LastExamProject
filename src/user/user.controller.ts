@@ -21,9 +21,9 @@ import { RolesGuard } from 'src/guards/role.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @Roles(UserRole.OWNER)
-  // @UseGuards(RolesGuard)
-  // @UseGuards(AuthGuard)
+  @Roles(UserRole.OWNER)
+  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
