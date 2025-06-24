@@ -3,11 +3,6 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
 
 export class CreatePurchaseDto {
-  @ApiProperty({ example: 'user_uuid' })
-  @IsString()
-  @IsNotEmpty()
-  userId: string;
-
   @ApiProperty({ example: 'partner_uuid' })
   @IsString()
   @IsNotEmpty()

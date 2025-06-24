@@ -25,29 +25,33 @@ enum UserStatus {
 }
 
 model Users {
-  id       String     @id @default(uuid())
-  fullName String
-  phone    String     @unique
-  password String
-  role     UserRole
-  status   UserStatus @default(ACTIVE)
-  balance  Decimal    @default(0)
-  avatar   String
-  Salary   Salary[]
-  Product  Product[]
-  Partners Partners[]
-  Purchase Purchase[]
-  Contract Contract[]
-  Payment  Payment[]
+  id        String     @id @default(uuid())
+  fullName  String
+  phone     String     @unique
+  password  String
+  role      UserRole
+  status    UserStatus @default(ACTIVE)
+  balance   Decimal    @default(0) @db.Decimal(10, 2)
+  avatar    String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  Salary    Salary[]
+  Product   Product[]
+  Partners  Partners[]
+  Purchase  Purchase[]
+  Contract  Contract[]
+  Payment   Payment[]
 }
 
 model Category {
-  id       String    @id @default(uuid())
-  title    String
-  time     Int
-  isActive Boolean
-  image    String
-  Product  Product[]
+  id        String    @id @default(uuid())
+  title     String
+  time      Int
+  isActive  Boolean
+  image     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Product   Product[]
 }
 
 enum ProductUnits {
@@ -60,17 +64,19 @@ enum ProductUnits {
 model Product {
   id         String       @id @default(uuid())
   title      String
-  sellPrice  Decimal
-  buyPrice   Decimal
+  sellPrice  Decimal      @db.Decimal(10, 2)
+  buyPrice   Decimal      @db.Decimal(10, 2)
   quantity   Int
   categoryId String
-  category   Category     @relation(fields: [categoryId], references: [id])
+  category   Category     @relation(fields: [categoryId], references: [id], onDelete: Restrict)
   units      ProductUnits
-  userId     String
-  user       Users        @relation(fields: [userId], references: [id])
+  userId     String?
+  user       Users?       @relation(fields: [userId], references: [id], onDelete: SetNull)
   isActive   Boolean
-  comment    String
+  comment    String?
   image      String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
   Purchase   Purchase[]
   Contract   Contract[]
 }
@@ -78,10 +84,11 @@ model Product {
 model Salary {
   id        String   @id @default(uuid())
   userId    String
-  user      Users    @relation(fields: [userId], references: [id])
-  amount    Decimal
+  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount    Decimal  @db.Decimal(10, 2)
   comment   String?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum PartnerRole {
@@ -90,44 +97,50 @@ enum PartnerRole {
 }
 
 model Partners {
-  id       String      @id @default(uuid())
-  fullName String
-  phone    String      @unique
-  userId   String
-  user     Users       @relation(fields: [userId], references: [id])
-  isActive Boolean
-  balance  Decimal
-  role     PartnerRole
-  address  String
-  Purchase Purchase[]
-  Payment  Payment[]
-  Contract Contract[]
+  id        String      @id @default(uuid())
+  fullName  String
+  phone     String      @unique
+  userId    String?
+  user      Users?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  isActive  Boolean
+  balance   Decimal     @db.Decimal(10, 2)
+  role      PartnerRole
+  address   String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  Purchase  Purchase[]
+  Payment   Payment[]
+  Contract  Contract[]
 }
 
 model Purchase {
   id        String   @id @default(uuid())
-  userId    String
-  user      Users    @relation(fields: [userId], references: [id])
+  userId    String?
+  user      Users?   @relation(fields: [userId], references: [id], onDelete: SetNull)
   partnerId String
-  partner   Partners @relation(fields: [partnerId], references: [id])
+  partner   Partners @relation(fields: [partnerId], references: [id], onDelete: Cascade)
   productId String
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
-  buyPrice  Decimal
-  comment   String
+  buyPrice  Decimal  @db.Decimal(10, 2)
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Contract {
   id            String          @id @default(uuid())
   partnerId     String
-  partner       Partners        @relation(fields: [partnerId], references: [id])
+  partner       Partners        @relation(fields: [partnerId], references: [id], onDelete: Cascade)
   productId     String
-  product       Product         @relation(fields: [productId], references: [id])
-  userId        String
-  user          Users           @relation(fields: [userId], references: [id])
+  product       Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId        String?
+  user          Users?          @relation(fields: [userId], references: [id], onDelete: SetNull)
   quantity      Int
-  sellPrice     Decimal
-  time          Int
+  sellPrice     Decimal         @db.Decimal(10, 2)
+  duration      Int
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   Debt          Debt[]
   ReturnProduct ReturnProduct[]
 }
@@ -135,21 +148,25 @@ model Contract {
 model Debt {
   id         String    @id @default(uuid())
   contractId String
-  contract   Contract  @relation(fields: [contractId], references: [id])
-  total      Decimal
-  time       Int
+  contract   Contract  @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  total      Decimal   @db.Decimal(10, 2)
+  duration   Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   Payment    Payment[]
 }
 
 model ReturnProduct {
   id         String   @id @default(uuid())
   contractId String
-  contract   Contract @relation(fields: [contractId], references: [id])
+  contract   Contract @relation(fields: [contractId], references: [id], onDelete: Cascade)
   isNew      Boolean
-  reason     String
+  reason     String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
-enum PaymentPyte {
+enum PaymentType {
   CASH
   CARD
 }
@@ -162,13 +179,15 @@ enum Type {
 model Payment {
   id          String      @id @default(uuid())
   partnerId   String
-  partner     Partners    @relation(fields: [partnerId], references: [id])
-  debtId      String
-  debt        Debt        @relation(fields: [debtId], references: [id])
-  userId      String
-  user        Users       @relation(fields: [userId], references: [id])
-  amount      Decimal
-  comment     String
-  paymentType PaymentPyte
+  partner     Partners    @relation(fields: [partnerId], references: [id], onDelete: Cascade)
+  debtId      String?
+  debt        Debt?       @relation(fields: [debtId], references: [id], onDelete: SetNull)
+  userId      String?
+  user        Users?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  amount      Decimal     @db.Decimal(10, 2)
+  comment     String?
+  paymentType PaymentType
   type        Type
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }

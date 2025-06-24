@@ -23,7 +23,9 @@ export class CategoryService {
 
   async findAll() {
     try {
-      const categories = await this.prisma.category.findMany();
+      const categories = await this.prisma.category.findMany({
+        include: { Product: true },
+      });
       return categories;
     } catch (error) {
       throw new BadRequestException(error.message);

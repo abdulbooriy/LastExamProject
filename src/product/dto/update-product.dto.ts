@@ -41,11 +41,6 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
   @IsOptional()
   units?: ProductUnits;
 
-  @ApiProperty({ example: 'user uuid' })
-  @IsString()
-  @IsOptional()
-  userId?: string;
-
   @ApiProperty({ example: true })
   @IsBoolean()
   @IsOptional()

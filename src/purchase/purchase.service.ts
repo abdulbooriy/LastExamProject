@@ -6,19 +6,22 @@ import {
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { UpdatePurchaseDto } from './dto/update-purchase.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { Request } from 'express';
 
 @Injectable()
 export class PurchaseService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createPurchaseDto: CreatePurchaseDto) {
+  async create(createPurchaseDto: CreatePurchaseDto, req: Request) {
     try {
+      let user = req['user'];
+
       const findProduct = await this.prisma.product.findFirst({
         where: { id: createPurchaseDto.productId },
       });
 
       const checkUser = await this.prisma.users.findFirst({
-        where: { id: createPurchaseDto.userId },
+        where: { id: user.id },
       });
       if (!checkUser) throw new NotFoundException('User not found!');
 
@@ -34,7 +37,7 @@ export class PurchaseService {
 
       const new_purchase = await this.prisma.purchase.create({
         data: {
-          userId: createPurchaseDto.userId,
+          userId: user.id,
           partnerId: createPurchaseDto.partnerId,
           productId: createPurchaseDto.productId,
           quantity: findProduct?.quantity,

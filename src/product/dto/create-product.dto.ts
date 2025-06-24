@@ -38,7 +38,7 @@ export class CreateProductDto {
   @IsNotEmpty()
   quantity: number;
 
-  @ApiProperty({ example: 'category uuid' })
+  @ApiProperty({ example: 'category_uuid' })
   @IsString()
   @IsNotEmpty()
   categoryId: string;
@@ -47,11 +47,6 @@ export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
   units: ProductUnits;
-
-  @ApiProperty({ example: 'user uuid' })
-  @IsString()
-  @IsNotEmpty()
-  userId: string;
 
   @ApiProperty({ example: true })
   @IsBoolean()

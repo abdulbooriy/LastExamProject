@@ -7,13 +7,18 @@ import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from 'generated/prisma';
+import { Request } from 'express';
 
 @Injectable()
 export class PartnerService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createPartnerDto: CreatePartnerDto) {
+  async create(createPartnerDto: CreatePartnerDto, req: Request) {
     try {
+      const user = req['user'];
+
+      console.log(user);
+
       const checkPartner = await this.prisma.partners.findUnique({
         where: { phone: createPartnerDto.phone },
       });
@@ -24,7 +29,7 @@ export class PartnerService {
         );
 
       const checkUserId = await this.prisma.users.findFirst({
-        where: { id: createPartnerDto.userId },
+        where: { id: user.id },
       });
       if (!checkUserId) throw new NotFoundException('userId not found!');
 
@@ -32,7 +37,7 @@ export class PartnerService {
         data: {
           fullName: createPartnerDto.fullName,
           phone: createPartnerDto.phone,
-          userId: createPartnerDto.userId,
+          userId: user?.id,
           isActive: createPartnerDto.isActive,
           balance: new Prisma.Decimal(createPartnerDto.balance),
           role: createPartnerDto.role,

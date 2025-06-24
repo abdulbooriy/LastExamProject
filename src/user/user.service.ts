@@ -78,7 +78,7 @@ export class UserService {
       const user = await this.prisma.users.findFirst({ where: { id } });
       if (!user) throw new NotFoundException('User not found!');
 
-      let imagePath = join(__dirname, '../../uploads', user.avatar);
+      let imagePath = join(__dirname, '../../uploads', user.avatar || '');
 
       await this.prisma.users.delete({ where: { id } });
       fs.unlink(imagePath, (e) => {

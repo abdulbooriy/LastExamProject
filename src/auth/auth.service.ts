@@ -28,8 +28,6 @@ export class AuthService {
         loginDto.password,
         checkUser.password,
       );
-      console.log(loginDto.password);
-      console.log(checkPassword);
 
       if (!checkPassword) throw new BadRequestException('Wrong Password!');
 

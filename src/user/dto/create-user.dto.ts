@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsPhoneNumber, IsString } from 'class-validator';
-import { Decimal } from 'generated/prisma/runtime/library';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsPhoneNumber,
+  IsString,
+} from 'class-validator';
 
 export enum UserRole {
   OWNER = 'OWNER',
@@ -37,6 +41,6 @@ export class CreateUserDto {
 
   @ApiProperty({ example: 'user avatar image url' })
   @IsString()
-  @IsNotEmpty()
-  avatar: string;
+  @IsOptional()
+  avatar?: string;
 }

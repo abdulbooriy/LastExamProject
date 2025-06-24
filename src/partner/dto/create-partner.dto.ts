@@ -24,11 +24,6 @@ export class CreatePartnerDto {
   @IsNotEmpty()
   phone: string;
 
-  @ApiProperty({ example: 'user_uuid' })
-  @IsString()
-  @IsNotEmpty()
-  userId: string;
-
   @ApiProperty({ example: true })
   @IsBoolean()
   @IsNotEmpty()

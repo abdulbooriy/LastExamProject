@@ -8,23 +8,27 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as fs from 'fs';
 import { join } from 'path';
+import { Request } from 'express';
 
 @Injectable()
 export class ProductService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, req: Request) {
     try {
+      const user = req['user'];
+
       let category = await this.prisma.category.findFirst({
         where: { id: createProductDto.categoryId },
       });
       if (!category)
         throw new BadRequestException('This categoryId is not exists!');
 
-      let user = await this.prisma.users.findFirst({
-        where: { id: createProductDto.userId },
+      let findUser = await this.prisma.users.findFirst({
+        where: { id: user.id },
       });
-      if (!user) throw new BadRequestException('This userId is not exists!');
+      if (!findUser)
+        throw new BadRequestException('This userId is not exists!');
 
       const products = await this.prisma.product.create({
         data: createProductDto,
@@ -38,7 +42,9 @@ export class ProductService {
 
   async findAll() {
     try {
-      const products = await this.prisma.product.findMany();
+      const products = await this.prisma.product.findMany({
+        include: { category: true, user: true },
+      });
       return products;
     } catch (error) {
       throw new BadRequestException(error.message);

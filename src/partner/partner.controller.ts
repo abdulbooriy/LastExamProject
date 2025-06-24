@@ -6,18 +6,23 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { PartnerService } from './partner.service';
 import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
+import { Request } from 'express';
+import { AuthGuard } from 'src/guards/auth.guard';
 
 @Controller('partner')
 export class PartnerController {
   constructor(private readonly partnerService: PartnerService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createPartnerDto: CreatePartnerDto) {
-    return this.partnerService.create(createPartnerDto);
+  create(@Body() createPartnerDto: CreatePartnerDto, @Req() req: Request) {
+    return this.partnerService.create(createPartnerDto, req);
   }
 
   @Get()

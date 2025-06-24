@@ -23,6 +23,8 @@ export class SalaryService {
         where: { id: createSalaryDto.userId },
       });
 
+      console.log(new_salary.userId);
+
       return {
         message: 'Salary is created successfully',
         data: new_salary,
