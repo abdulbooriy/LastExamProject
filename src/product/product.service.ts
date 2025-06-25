@@ -42,9 +42,7 @@ export class ProductService {
 
   async findAll() {
     try {
-      const products = await this.prisma.product.findMany({
-        include: { category: true, user: true },
-      });
+      const products = await this.prisma.product.findMany();
       return products;
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -53,7 +51,71 @@ export class ProductService {
 
   async findOne(id: string) {
     try {
-      const product = await this.prisma.product.findFirst({ where: { id } });
+      const product = await this.prisma.product.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          title: true,
+          sellPrice: true,
+          buyPrice: true,
+          quantity: true,
+          units: true,
+          isActive: true,
+          comment: true,
+          image: true,
+          createdAt: true,
+          updatedAt: true,
+          category: true,
+          user: true,
+          Purchase: {
+            select: {
+              id: true,
+              quantity: true,
+              buyPrice: true,
+              comment: true,
+              createdAt: true,
+              updatedAt: true,
+              user: {
+                select: {
+                  id: true,
+                  fullName: true,
+                  phone: true,
+                  role: true,
+                  status: true,
+                  balance: true,
+                  avatar: true,
+                  createdAt: true,
+                  updatedAt: true,
+                },
+              },
+              partner: {
+                select: {
+                  id: true,
+                  fullName: true,
+                  phone: true,
+                  isActive: true,
+                  balance: true,
+                  role: true,
+                  address: true,
+                  user: {
+                    select: {
+                      id: true,
+                      fullName: true,
+                      phone: true,
+                      role: true,
+                      status: true,
+                      balance: true,
+                      avatar: true,
+                      createdAt: true,
+                      updatedAt: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
       if (!product) throw new NotFoundException('Product not found!');
 
       return product;

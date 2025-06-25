@@ -23,9 +23,7 @@ export class CategoryService {
 
   async findAll() {
     try {
-      const categories = await this.prisma.category.findMany({
-        include: { Product: true },
-      });
+      const categories = await this.prisma.category.findMany();
       return categories;
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -34,7 +32,25 @@ export class CategoryService {
 
   async findOne(id: string) {
     try {
-      const category = await this.prisma.category.findFirst({ where: { id } });
+      const category = await this.prisma.category.findFirst({
+        where: { id },
+        include: {
+          Product: {
+            select: {
+              id: true,
+              title: true,
+              sellPrice: true,
+              buyPrice: true,
+              quantity: true,
+              units: true,
+              isActive: true,
+              comment: true,
+              image: true,
+              userId: true,
+            },
+          },
+        },
+      });
       if (!category) throw new BadRequestException('Category not found!');
 
       return category;
@@ -59,7 +75,7 @@ export class CategoryService {
         console.log(e ? e.message : 'category image deleted!');
       });
 
-      return { categories };
+      return { message: 'Category is successfully updated!', data: categories };
     } catch (error) {
       throw new BadRequestException(error.message);
     }

@@ -128,6 +128,15 @@ model Purchase {
   updatedAt DateTime @updatedAt
 }
 
+enum ContractStatus {
+  ACTIVE
+  PAID
+  PARTIAL
+  EXPIRED
+  RETURNED
+  CANCELED
+}
+
 model Contract {
   id            String          @id @default(uuid())
   partnerId     String
@@ -139,20 +148,29 @@ model Contract {
   quantity      Int
   sellPrice     Decimal         @db.Decimal(10, 2)
   duration      Int
+  status        ContractStatus  @default(ACTIVE)
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   Debt          Debt[]
   ReturnProduct ReturnProduct[]
 }
 
+enum DebtStatus {
+  UNPAID
+  PARTIAL
+  PAID
+  OVERDUE
+}
+
 model Debt {
-  id         String    @id @default(uuid())
+  id         String     @id @default(uuid())
   contractId String
-  contract   Contract  @relation(fields: [contractId], references: [id], onDelete: Cascade)
-  total      Decimal   @db.Decimal(10, 2)
+  contract   Contract   @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  total      Decimal    @db.Decimal(10, 2)
   duration   Int
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  status     DebtStatus @default(UNPAID)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
   Payment    Payment[]
 }
 

@@ -3,7 +3,7 @@ import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateSalaryDto {
-  @ApiProperty({ example: 'user uuid' })
+  @ApiProperty({ example: 'user_uuid' })
   @IsString()
   userId: string;
 

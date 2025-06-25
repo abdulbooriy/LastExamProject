@@ -53,18 +53,4 @@ export class SalaryService {
       throw new BadRequestException(error.message);
     }
   }
-
-  async update(id: string, updateSalaryDto: UpdateSalaryDto) {
-    try {
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
-
-  async remove(id: string) {
-    try {
-    } catch (error) {
-      throw new BadRequestException(error.message);
-    }
-  }
 }

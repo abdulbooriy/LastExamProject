@@ -39,7 +39,17 @@ export class UserService {
 
   async findAll() {
     try {
-      const users = await this.prisma.users.findMany();
+      const users = await this.prisma.users.findMany({
+        select: {
+          id: true,
+          fullName: true,
+          phone: true,
+          role: true,
+          status: true,
+          balance: true,
+          avatar: true,
+        },
+      });
       return users;
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -48,10 +58,21 @@ export class UserService {
 
   async findOne(id: string) {
     try {
-      const user = await this.prisma.users.findFirst({ where: { id } });
+      const user = await this.prisma.users.findFirst({
+        where: { id },
+        select: {
+          id: true,
+          fullName: true,
+          phone: true,
+          role: true,
+          status: true,
+          balance: true,
+          avatar: true,
+        },
+      });
       if (!user) throw new NotFoundException('User not found!');
 
-      return { user };
+      return user;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
