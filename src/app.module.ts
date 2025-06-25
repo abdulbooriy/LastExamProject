@@ -15,6 +15,7 @@ import { PurchaseModule } from './purchase/purchase.module';
 import { PartnerModule } from './partner/partner.module';
 import { ContractModule } from './contract/contract.module';
 import { ReturnProductModule } from './return_product/return_product.module';
+import { DebtModule } from './debt/debt.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { ReturnProductModule } from './return_product/return_product.module';
     PartnerModule,
     ContractModule,
     ReturnProductModule,
+    DebtModule,
   ],
   controllers: [],
   providers: [],
