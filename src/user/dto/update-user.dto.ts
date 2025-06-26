@@ -26,9 +26,9 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   role?: UserRole;
 
   @ApiProperty({ example: 0 })
+  @Type(() => Number)
   @IsNumber()
   @IsOptional()
-  @Type(() => Number)
   balance?: number;
 
   @ApiProperty({ example: 'user avatar image url' })

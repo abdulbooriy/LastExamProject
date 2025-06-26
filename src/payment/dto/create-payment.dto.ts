@@ -35,7 +35,7 @@ export class CreatePaymentDto {
   @IsPositive()
   amount: number;
 
-  @ApiProperty({ example: 'comments for payments' })
+  @ApiProperty({ example: 'comment for payment' })
   @IsString()
   @IsOptional()
   comment: string;

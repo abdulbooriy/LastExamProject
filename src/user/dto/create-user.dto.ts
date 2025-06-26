@@ -42,8 +42,8 @@ export class CreateUserDto {
   status: UserStatus.ACTIVE;
 
   @ApiProperty({ example: 0, default: 0 })
-  @IsNumber()
   @Type(() => Number)
+  @IsNumber()
   balance: number;
 
   @ApiProperty({ example: 'user avatar image url' })

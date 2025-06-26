@@ -23,7 +23,7 @@ export class CreateCategoryDto {
   @IsBoolean()
   isActive: boolean;
 
-  @ApiProperty({ example: 4 })
+  @ApiProperty({ example: 0 })
   @Type(() => Number)
   @IsNumber()
   @IsPositive()

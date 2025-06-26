@@ -19,7 +19,7 @@ export class PurchaseService {
         where: { id: createPurchaseDto.productId },
       });
       if (!findProduct || !findProduct.sellPrice)
-        throw new NotFoundException('Product or buyPrice not found!');
+        throw new NotFoundException('Product not found!');
 
       const checkUser = await this.prisma.users.findFirst({
         where: { id: user.id },
@@ -31,22 +31,43 @@ export class PurchaseService {
       });
       if (!checkPartner) throw new NotFoundException('Partner not found!');
 
-      const new_purchase = await this.prisma.purchase.create({
-        data: {
-          userId: user.id,
-          partnerId: createPurchaseDto.partnerId,
-          productId: createPurchaseDto.productId,
-          quantity: Number(findProduct?.quantity),
-          buyPrice: Number(
-            findProduct?.sellPrice
-              ? findProduct.sellPrice
-              : createPurchaseDto.buyPrice,
-          ),
-          comment: createPurchaseDto.comment,
-        },
+      const totalCost = Number(findProduct.quantity) * Number(createPurchaseDto.buyPrice);
+
+      const productBuyPrice = Number(findProduct.quantity) + Number(findProduct.buyPrice);
+      const purchseBuyPrice = Number(createPurchaseDto.quantity) + Number(createPurchaseDto.buyPrice);
+
+      const totalQuantity = Number(findProduct.quantity) + Number(createPurchaseDto.quantity);
+      const totalPrice = (productBuyPrice + purchseBuyPrice) / totalQuantity;
+
+      const created_purchase = await this.prisma.$transaction(async (tx) => {
+        const new_purchase = await tx.purchase.create({
+          data: {
+            userId: user?.id,
+            partnerId: createPurchaseDto.partnerId,
+            productId: createPurchaseDto.productId,
+            quantity: Number(createPurchaseDto.quantity),
+            buyPrice: Number(
+              createPurchaseDto.buyPrice
+                ? createPurchaseDto.buyPrice
+                : findProduct.buyPrice,
+            ),
+            comment: createPurchaseDto.comment,
+          },
+        });
+
+        await this.prisma.partners.update({
+          where: { id: createPurchaseDto.partnerId },
+          data: {
+            balance: {
+              increment: Number(totalCost),
+            },
+          },
+        });
+
+        return new_purchase;
       });
 
-      return new_purchase;
+      return { data: created_purchase, totalPrice };
     } catch (error) {
       throw new BadRequestException(error.message);
     }

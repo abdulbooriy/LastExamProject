@@ -22,13 +22,9 @@ export class CreateContractDto {
   @ApiProperty({ example: 0 })
   @Type(() => Number)
   @IsNumber()
-  @IsPositive()
   sellPrice: number;
 
   @ApiProperty({ example: 0 })
   @Type(() => Number)
-  @IsNumber()
-  @IsPositive()
-  @IsNotEmpty()
   duration: number;
 }

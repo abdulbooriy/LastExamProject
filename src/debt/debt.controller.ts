@@ -9,7 +9,7 @@ import { UserRole } from 'src/user/dto/create-user.dto';
 export class DebtController {
   constructor(private readonly debtService: DebtService) {}
 
-  @Roles(UserRole.OWNER, UserRole.STAFF)
+  @Roles(UserRole.OWNER)
   @UseGuards(RolesGuard)
   @UseGuards(AuthGuard)
   @Get()
@@ -17,7 +17,7 @@ export class DebtController {
     return this.debtService.findAll();
   }
 
-  @Roles(UserRole.OWNER, UserRole.STAFF)
+  @Roles(UserRole.OWNER)
   @UseGuards(RolesGuard)
   @UseGuards(AuthGuard)
   @Get(':id')

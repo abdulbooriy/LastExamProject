@@ -28,36 +28,45 @@ export class ContractService {
       });
       if (!partner) throw new NotFoundException('Partner not found!');
 
-      const contract = await this.prisma.$transaction(async (tx) => {
+      const category = await this.prisma.category.findFirst({
+        where: { time: createContractDto.duration },
+      });
+      if (!category) throw new NotFoundException('Category time not found!');
+
+      const created_contract = await this.prisma.$transaction(async (tx) => {
         const new_contract = await tx.contract.create({
           data: {
             partnerId: createContractDto.partnerId,
             productId: createContractDto.productId,
             userId: user.id,
             quantity: Number(createContractDto.quantity),
-            sellPrice: Number(product.sellPrice),
-            duration: createContractDto.duration,
+            sellPrice: Number(product?.sellPrice),
+            duration: createContractDto.duration
+              ? createContractDto.duration
+              : Number(category.time),
           },
         });
 
         await tx.partners.update({
           where: { id: createContractDto.partnerId },
           data: {
-            balance: (partner.balance +=
+            balance: (partner.balance -=
               new_contract.quantity * Number(new_contract.sellPrice)),
           },
         });
 
         await tx.debt.create({
           data: {
-            contractId: new_contract.id,
-            total: new_contract.quantity * Number(new_contract.sellPrice),
-            duration: createContractDto.duration,
+            contractId: new_contract?.id,
+            total: new_contract?.quantity * Number(new_contract.sellPrice),
+            duration: new_contract.duration,
           },
         });
+
+        return new_contract;
       });
 
-      return contract;
+      return created_contract;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
