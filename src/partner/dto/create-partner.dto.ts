@@ -3,7 +3,6 @@ import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
-  IsNumber,
   IsPhoneNumber,
   IsString,
 } from 'class-validator';
@@ -14,24 +13,24 @@ export enum PartnerRole {
 }
 
 export class CreatePartnerDto {
-  @ApiProperty({ example: 'Ali Valiyev' })
+  @ApiProperty({ example: 'full_name' })
   @IsString()
   @IsNotEmpty()
   fullName: string;
 
-  @ApiProperty({ example: '+998507525150' })
+  @ApiProperty({ example: 'phone_number' })
   @IsPhoneNumber()
   @IsNotEmpty()
   phone: string;
+
+  userId: string;
 
   @ApiProperty({ example: true })
   @IsBoolean()
   @IsNotEmpty()
   isActive: boolean;
 
-  @ApiProperty({ default: 0 })
-  @IsNumber()
-  @IsNotEmpty()
+  @ApiProperty({ example: 0 })
   @Type(() => Number)
   balance: number;
 
@@ -40,7 +39,7 @@ export class CreatePartnerDto {
   @IsNotEmpty()
   role: PartnerRole;
 
-  @ApiProperty({ example: 'Tashkent, Uzbekistan' })
+  @ApiProperty({ example: 'address' })
   @IsString()
   @IsNotEmpty()
   address: string;

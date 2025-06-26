@@ -1,13 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsOptional,
-  IsPositive,
   IsString,
 } from 'class-validator';
-import { Decimal } from 'generated/prisma/runtime/library';
 
 export enum ProductUnits {
   KG = 'KG',
@@ -17,24 +16,26 @@ export enum ProductUnits {
 }
 
 export class CreateProductDto {
-  @ApiProperty({ example: 'Redmi Note 10 Pro' })
+  @ApiProperty({ example: 'product title' })
   @IsString()
   @IsNotEmpty()
   title: string;
 
-  @ApiProperty({ example: 250000 })
-  @IsPositive()
-  @IsNotEmpty()
-  sellPrice: Decimal;
-
-  @ApiProperty({ example: 250000 })
-  @IsPositive()
-  @IsNotEmpty()
-  buyPrice: Decimal;
-
-  @ApiProperty({ example: 10 })
+  @ApiProperty({ example: 0 })
+  @Type(() => Number)
   @IsNumber()
-  @IsPositive()
+  @IsNotEmpty()
+  sellPrice: number;
+
+  @ApiProperty({ example: 0 })
+  @Type(() => Number)
+  @IsNumber()
+  @IsNotEmpty()
+  buyPrice: number;
+
+  @ApiProperty({ example: 0 })
+  @Type(() => Number)
+  @IsNumber()
   @IsNotEmpty()
   quantity: number;
 
@@ -44,7 +45,6 @@ export class CreateProductDto {
   categoryId: string;
 
   @ApiProperty({ example: ProductUnits.KG })
-  @IsString()
   @IsNotEmpty()
   units: ProductUnits;
 
@@ -53,13 +53,13 @@ export class CreateProductDto {
   @IsNotEmpty()
   isActive: boolean;
 
-  @ApiProperty({ example: 'the best products with amazing discounts' })
+  @ApiProperty({ example: 'comments for products' })
   @IsString()
   @IsOptional()
   comment: string;
 
   @ApiProperty({ example: 'product image url' })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   image: string;
 }

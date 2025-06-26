@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -8,22 +9,23 @@ import {
 } from 'class-validator';
 
 export class CreateCategoryDto {
-  @ApiProperty({ example: 'fruits' })
+  @ApiProperty({ example: 'category title' })
   @IsString()
   @IsNotEmpty()
   title: string;
-
-  @ApiProperty({ example: 4 })
-  @IsNumber()
-  @IsPositive()
-  time: number;
-
-  @ApiProperty({ example: true })
-  @IsBoolean()
-  isActive: boolean;
 
   @ApiProperty({ example: 'category image url' })
   @IsString()
   @IsNotEmpty()
   image: string;
+
+  @ApiProperty({ example: true })
+  @IsBoolean()
+  isActive: boolean;
+
+  @ApiProperty({ example: 4 })
+  @Type(() => Number)
+  @IsNumber()
+  @IsPositive()
+  time: number;
 }

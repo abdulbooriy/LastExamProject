@@ -14,6 +14,11 @@ export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {
   @IsOptional()
   title?: string;
 
+  @ApiProperty({ example: 'category image url' })
+  @IsString()
+  @IsOptional()
+  image?: string;
+
   @ApiProperty({ example: 4 })
   @IsNumber()
   @IsPositive()
@@ -24,9 +29,4 @@ export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {
   @IsBoolean()
   @IsOptional()
   isActive?: boolean;
-
-  @ApiProperty({ example: 'category image url' })
-  @IsString()
-  @IsOptional()
-  image?: string;
 }

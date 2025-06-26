@@ -7,13 +7,13 @@ export class CreateSalaryDto {
   @IsString()
   userId: string;
 
-  @ApiProperty({ example: 100000.0 })
+  @ApiProperty({ default: 0 })
   @IsNotEmpty()
   @Type(() => Number)
   amount: number;
 
   @ApiProperty({
-    example: 'June month',
+    example: 'comments for salary',
     required: false,
   })
   @IsString()

@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -8,6 +9,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import * as path from 'path';
+import * as fs from 'fs';
 
 @ApiTags('File-Upload')
 @Controller('upload-image')
@@ -24,7 +26,7 @@ export class UploadImageController {
       },
     },
   })
-  @Post('file-upload')
+  @Post('image-upload')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -41,5 +43,18 @@ export class UploadImageController {
     if (!file) return { message: 'File image not found!' };
 
     return { image: file.filename };
+  }
+
+  @Get('get-images')
+  getImage() {
+    const directoryPath = path.join(__dirname, '..', '..', 'uploads');
+
+    const files = fs.readdirSync(directoryPath);
+    const fileUrls = files.map((file) => ({
+      filename: file,
+      url: file,
+    }));
+
+    return fileUrls;
   }
 }

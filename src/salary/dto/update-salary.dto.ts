@@ -15,7 +15,7 @@ export class UpdateSalaryDto extends PartialType(CreateSalaryDto) {
   amount?: number;
 
   @ApiProperty({
-    example: 'For July month',
+    example: 'comments for salary',
     required: false,
   })
   @IsString()

@@ -28,14 +28,14 @@ export class ContractService {
       });
       if (!partner) throw new NotFoundException('Partner not found!');
 
-      await this.prisma.$transaction(async (tx) => {
+      const contract = await this.prisma.$transaction(async (tx) => {
         const new_contract = await tx.contract.create({
           data: {
             partnerId: createContractDto.partnerId,
             productId: createContractDto.productId,
             userId: user.id,
-            quantity: createContractDto.quantity,
-            sellPrice: product.sellPrice,
+            quantity: Number(createContractDto.quantity),
+            sellPrice: Number(product.sellPrice),
             duration: createContractDto.duration,
           },
         });
@@ -43,9 +43,8 @@ export class ContractService {
         await tx.partners.update({
           where: { id: createContractDto.partnerId },
           data: {
-            balance: partner.balance.plus(
-              new_contract.quantity * Number(new_contract.sellPrice),
-            ),
+            balance: (partner.balance +=
+              new_contract.quantity * Number(new_contract.sellPrice)),
           },
         });
 
@@ -58,9 +57,7 @@ export class ContractService {
         });
       });
 
-      return {
-        message: 'Contract created successfully!',
-      };
+      return contract;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

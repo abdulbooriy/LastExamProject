@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ReturnProductService } from './return_product.service';
 import { CreateReturnProductDto } from './dto/create-return_product.dto';
 import { UpdateReturnProductDto } from './dto/update-return_product.dto';
@@ -19,16 +27,19 @@ export class ReturnProductController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.returnProductService.findOne(+id);
+    return this.returnProductService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReturnProductDto: UpdateReturnProductDto) {
-    return this.returnProductService.update(+id, updateReturnProductDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateReturnProductDto: UpdateReturnProductDto,
+  ) {
+    return this.returnProductService.update(id, updateReturnProductDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.returnProductService.remove(+id);
+    return this.returnProductService.remove(id);
   }
 }

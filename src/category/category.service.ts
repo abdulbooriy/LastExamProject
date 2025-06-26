@@ -75,7 +75,7 @@ export class CategoryService {
         console.log(e ? e.message : 'category image deleted!');
       });
 
-      return { message: 'Category is successfully updated!', data: categories };
+      return categories;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

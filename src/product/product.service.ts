@@ -63,8 +63,6 @@ export class ProductService {
           isActive: true,
           comment: true,
           image: true,
-          createdAt: true,
-          updatedAt: true,
           category: true,
           user: true,
           Purchase: {
@@ -73,8 +71,6 @@ export class ProductService {
               quantity: true,
               buyPrice: true,
               comment: true,
-              createdAt: true,
-              updatedAt: true,
               user: {
                 select: {
                   id: true,
@@ -84,8 +80,6 @@ export class ProductService {
                   status: true,
                   balance: true,
                   avatar: true,
-                  createdAt: true,
-                  updatedAt: true,
                 },
               },
               partner: {
@@ -106,8 +100,6 @@ export class ProductService {
                       status: true,
                       balance: true,
                       avatar: true,
-                      createdAt: true,
-                      updatedAt: true,
                     },
                   },
                 },

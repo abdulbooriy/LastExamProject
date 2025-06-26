@@ -13,18 +13,19 @@ export class CreateContractDto {
   @IsNotEmpty()
   productId: string;
 
-  @ApiProperty({ example: 100 })
+  @ApiProperty({ example: 0 })
   @Type(() => Number)
   @IsNumber()
   @IsPositive()
-  @IsNotEmpty()
   quantity: number;
 
-  @ApiProperty({ example: 100000 })
+  @ApiProperty({ example: 0 })
   @Type(() => Number)
+  @IsNumber()
+  @IsPositive()
   sellPrice: number;
 
-  @ApiProperty({ example: 2 })
+  @ApiProperty({ example: 0 })
   @Type(() => Number)
   @IsNumber()
   @IsPositive()

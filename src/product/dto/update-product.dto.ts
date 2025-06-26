@@ -7,31 +7,32 @@ import {
   IsPositive,
   IsString,
 } from 'class-validator';
-import { Decimal } from 'generated/prisma/runtime/library';
+import { Type } from 'class-transformer';
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {
-  @ApiProperty({ example: 'Redmi Note 10 Pro' })
+  @ApiProperty({ example: 'product title' })
   @IsString()
   @IsOptional()
   title?: string;
 
-  @ApiProperty({ example: 250000 })
+  @ApiProperty({ example: 0 })
+  @Type(() => Number)
   @IsPositive()
   @IsOptional()
-  sellPrice?: Decimal;
+  sellPrice?: number;
 
-  @ApiProperty({ example: 250000 })
-  @IsPositive()
+  @ApiProperty({ example: 0 })
+  @Type(() => Number)
   @IsOptional()
-  buyPrice?: Decimal;
+  buyPrice?: number;
 
-  @ApiProperty({ example: 10 })
+  @ApiProperty({ example: 0 })
+  @Type(() => Number)
   @IsNumber()
-  @IsPositive()
   @IsOptional()
   quantity?: number;
 
-  @ApiProperty({ example: 'category uuid' })
+  @ApiProperty({ example: 'category_uuid' })
   @IsString()
   @IsOptional()
   categoryId?: string;

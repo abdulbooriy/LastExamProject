@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateReturnProductDto } from './dto/create-return_product.dto';
-import { UpdateReturnProductDto } from './dto/update-return_product.dto';
+import { CreatePaymentDto } from './dto/create-payment.dto';
+import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class ReturnProductService {
+export class PaymentService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createReturnProductDto: CreateReturnProductDto) {
+  async create(createPaymentDto: CreatePaymentDto) {
     try {
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -28,7 +28,7 @@ export class ReturnProductService {
     }
   }
 
-  async update(id: string, updateReturnProductDto: UpdateReturnProductDto) {
+  async update(id: string, updatePaymentDto: UpdatePaymentDto) {
     try {
     } catch (error) {
       throw new BadRequestException(error.message);

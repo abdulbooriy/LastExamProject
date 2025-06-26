@@ -4,10 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
-import { UpdatePurchaseDto } from './dto/update-purchase.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
-import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class PurchaseService {
@@ -21,7 +19,7 @@ export class PurchaseService {
         where: { id: createPurchaseDto.productId },
       });
       if (!findProduct || !findProduct.sellPrice)
-        throw new NotFoundException('Product or price not found!');
+        throw new NotFoundException('Product or buyPrice not found!');
 
       const checkUser = await this.prisma.users.findFirst({
         where: { id: user.id },
@@ -39,12 +37,16 @@ export class PurchaseService {
           partnerId: createPurchaseDto.partnerId,
           productId: createPurchaseDto.productId,
           quantity: Number(findProduct?.quantity),
-          buyPrice: new Prisma.Decimal(findProduct?.sellPrice),
+          buyPrice: Number(
+            findProduct?.sellPrice
+              ? findProduct.sellPrice
+              : createPurchaseDto.buyPrice,
+          ),
           comment: createPurchaseDto.comment,
         },
       });
 
-      return { message: 'Purchase created successfully!', data: new_purchase };
+      return new_purchase;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -60,7 +62,10 @@ export class PurchaseService {
 
   async findOne(id: string) {
     try {
-      const purchase = await this.prisma.purchase.findFirst({ where: { id } });
+      const purchase = await this.prisma.purchase.findFirst({
+        where: { id },
+        include: { user: true, partner: true, product: true },
+      });
       if (!purchase) throw new NotFoundException('Purchase not found!');
 
       return purchase;

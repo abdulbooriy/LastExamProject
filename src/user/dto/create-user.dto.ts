@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsPhoneNumber,
   IsString,
@@ -17,17 +19,17 @@ export enum UserStatus {
 }
 
 export class CreateUserDto {
-  @ApiProperty({ example: 'Nurulloh Mahmitjanov' })
+  @ApiProperty({ example: 'full_name' })
   @IsString()
   @IsNotEmpty()
   fullName: string;
 
-  @ApiProperty({ example: '+998931416717' })
+  @ApiProperty({ example: 'phone_number' })
   @IsPhoneNumber()
   @IsNotEmpty()
   phone: string;
 
-  @ApiProperty({ example: '12345' })
+  @ApiProperty({ example: 'password' })
   @IsString()
   @IsNotEmpty()
   password: string;
@@ -38,6 +40,11 @@ export class CreateUserDto {
   role: UserRole;
 
   status: UserStatus.ACTIVE;
+
+  @ApiProperty({ example: 0, default: 0 })
+  @IsNumber()
+  @Type(() => Number)
+  balance: number;
 
   @ApiProperty({ example: 'user avatar image url' })
   @IsString()

@@ -11,6 +11,12 @@ CREATE TYPE "ProductUnits" AS ENUM ('KG', 'LITR', 'M2', 'PIECE');
 CREATE TYPE "PartnerRole" AS ENUM ('SELLER', 'CUSTOMER');
 
 -- CreateEnum
+CREATE TYPE "ContractStatus" AS ENUM ('ACTIVE', 'PAID', 'PARTIAL', 'EXPIRED', 'RETURNED', 'CANCELED');
+
+-- CreateEnum
+CREATE TYPE "DebtStatus" AS ENUM ('UNPAID', 'PARTIAL', 'PAID', 'OVERDUE');
+
+-- CreateEnum
 CREATE TYPE "PaymentType" AS ENUM ('CASH', 'CARD');
 
 -- CreateEnum
@@ -24,7 +30,7 @@ CREATE TABLE "Users" (
     "password" TEXT NOT NULL,
     "role" "UserRole" NOT NULL,
     "status" "UserStatus" NOT NULL DEFAULT 'ACTIVE',
-    "balance" DECIMAL(10,2) NOT NULL DEFAULT 0,
+    "balance" INTEGER NOT NULL DEFAULT 0,
     "avatar" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -49,8 +55,8 @@ CREATE TABLE "Category" (
 CREATE TABLE "Product" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
-    "sellPrice" DECIMAL(10,2) NOT NULL,
-    "buyPrice" DECIMAL(10,2) NOT NULL,
+    "sellPrice" INTEGER NOT NULL,
+    "buyPrice" INTEGER NOT NULL,
     "quantity" INTEGER NOT NULL,
     "categoryId" TEXT NOT NULL,
     "units" "ProductUnits" NOT NULL,
@@ -68,7 +74,7 @@ CREATE TABLE "Product" (
 CREATE TABLE "Salary" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "amount" DECIMAL(10,2) NOT NULL,
+    "amount" INTEGER NOT NULL,
     "comment" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -83,7 +89,7 @@ CREATE TABLE "Partners" (
     "phone" TEXT NOT NULL,
     "userId" TEXT,
     "isActive" BOOLEAN NOT NULL,
-    "balance" DECIMAL(10,2) NOT NULL,
+    "balance" INTEGER NOT NULL,
     "role" "PartnerRole" NOT NULL,
     "address" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -99,7 +105,7 @@ CREATE TABLE "Purchase" (
     "partnerId" TEXT NOT NULL,
     "productId" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
-    "buyPrice" DECIMAL(10,2) NOT NULL,
+    "buyPrice" INTEGER NOT NULL,
     "comment" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -114,8 +120,9 @@ CREATE TABLE "Contract" (
     "productId" TEXT NOT NULL,
     "userId" TEXT,
     "quantity" INTEGER NOT NULL,
-    "sellPrice" DECIMAL(10,2) NOT NULL,
+    "sellPrice" INTEGER NOT NULL,
     "duration" INTEGER NOT NULL,
+    "status" "ContractStatus" NOT NULL DEFAULT 'ACTIVE',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -126,8 +133,9 @@ CREATE TABLE "Contract" (
 CREATE TABLE "Debt" (
     "id" TEXT NOT NULL,
     "contractId" TEXT NOT NULL,
-    "total" DECIMAL(10,2) NOT NULL,
+    "total" INTEGER NOT NULL,
     "duration" INTEGER NOT NULL,
+    "status" "DebtStatus" NOT NULL DEFAULT 'UNPAID',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -152,7 +160,7 @@ CREATE TABLE "Payment" (
     "partnerId" TEXT NOT NULL,
     "debtId" TEXT,
     "userId" TEXT,
-    "amount" DECIMAL(10,2) NOT NULL,
+    "amount" INTEGER NOT NULL,
     "comment" TEXT,
     "paymentType" "PaymentType" NOT NULL,
     "type" "Type" NOT NULL,

@@ -22,16 +22,24 @@ export class UserService {
 
       if (checkUser)
         throw new BadRequestException(
-          `This ${checkUser?.phone} PhoneNumber is already in use!`,
+          `This ${checkUser?.phone} is already in use!`,
         );
 
       const hashPass = await bcrypt.hash(createUserDto.password, 10);
 
       const new_user = await this.prisma.users.create({
-        data: { ...createUserDto, password: hashPass },
+        data: {
+          fullName: createUserDto.fullName,
+          phone: createUserDto.phone,
+          password: hashPass,
+          role: createUserDto.role,
+          status: createUserDto.status,
+          balance: Number(createUserDto?.balance),
+          avatar: createUserDto.avatar,
+        },
       });
 
-      return { message: 'User created successfully!', data: new_user };
+      return new_user;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -88,7 +96,7 @@ export class UserService {
         where: { id },
       });
 
-      return { message: 'User is successfully updated!', data: new_user };
+      return new_user;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

@@ -11,8 +11,7 @@ export class DebtService {
 
   async findAll() {
     try {
-      const debts = await this.prisma.debt.findMany();
-      return debts;
+      return await this.prisma.debt.findMany();
     } catch (error) {
       throw new BadRequestException(error.message);
     }

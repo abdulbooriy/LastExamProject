@@ -1,8 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateSalaryDto } from './dto/create-salary.dto';
-import { UpdateSalaryDto } from './dto/update-salary.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from 'generated/prisma';
 
 @Injectable()
 export class SalaryService {
@@ -13,7 +11,7 @@ export class SalaryService {
       const new_salary = await this.prisma.salary.create({
         data: {
           userId: createSalaryDto.userId,
-          amount: new Prisma.Decimal(createSalaryDto?.amount),
+          amount: Number(createSalaryDto?.amount),
           comment: createSalaryDto.comment,
         },
       });
@@ -23,12 +21,7 @@ export class SalaryService {
         where: { id: createSalaryDto.userId },
       });
 
-      console.log(new_salary.userId);
-
-      return {
-        message: 'Salary is created successfully',
-        data: new_salary,
-      };
+      return new_salary;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

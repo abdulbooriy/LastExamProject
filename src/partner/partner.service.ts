@@ -6,7 +6,6 @@ import {
 import { CreatePartnerDto } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Prisma } from 'generated/prisma';
 import { Request } from 'express';
 
 @Injectable()
@@ -16,8 +15,6 @@ export class PartnerService {
   async create(createPartnerDto: CreatePartnerDto, req: Request) {
     try {
       const user = req['user'];
-
-      console.log(user);
 
       const checkPartner = await this.prisma.partners.findUnique({
         where: { phone: createPartnerDto.phone },
@@ -31,7 +28,7 @@ export class PartnerService {
       const checkUserId = await this.prisma.users.findFirst({
         where: { id: user.id },
       });
-      if (!checkUserId) throw new NotFoundException('userId not found!');
+      if (!checkUserId) throw new NotFoundException('user not found!');
 
       const new_partners = await this.prisma.partners.create({
         data: {
@@ -39,13 +36,13 @@ export class PartnerService {
           phone: createPartnerDto.phone,
           userId: user?.id,
           isActive: createPartnerDto.isActive,
-          balance: new Prisma.Decimal(createPartnerDto.balance),
+          balance: Number(createPartnerDto?.balance ?? 0),
           role: createPartnerDto.role,
           address: createPartnerDto.address,
         },
       });
 
-      return { message: 'Partner successfully created!', data: new_partners };
+      return new_partners;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
@@ -61,7 +58,51 @@ export class PartnerService {
 
   async findOne(id: string) {
     try {
-      const partner = await this.prisma.partners.findFirst({ where: { id } });
+      const partner = await this.prisma.partners.findFirst({
+        where: { id },
+        select: {
+          id: true,
+          fullName: true,
+          phone: true,
+          isActive: true,
+          balance: true,
+          role: true,
+          address: true,
+          Purchase: {
+            select: {
+              id: true,
+              quantity: true,
+              buyPrice: true,
+              comment: true,
+              product: {
+                select: {
+                  id: true,
+                  title: true,
+                  sellPrice: true,
+                  buyPrice: true,
+                  quantity: true,
+                  units: true,
+                  isActive: true,
+                  comment: true,
+                  image: true,
+                  category: true,
+                },
+              },
+            },
+          },
+          user: {
+            select: {
+              id: true,
+              fullName: true,
+              phone: true,
+              role: true,
+              status: true,
+              balance: true,
+              avatar: true,
+            },
+          },
+        },
+      });
       if (!partner) throw new BadRequestException('Partner not found');
 
       return partner;
@@ -80,10 +121,7 @@ export class PartnerService {
         where: { id },
       });
 
-      return {
-        message: 'Partner updated successfully!',
-        data: updated_partner,
-      };
+      return updated_partner;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
