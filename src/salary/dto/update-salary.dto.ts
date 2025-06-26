@@ -1,17 +1,19 @@
 import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateSalaryDto } from './create-salary.dto';
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class UpdateSalaryDto extends PartialType(CreateSalaryDto) {
-  @ApiProperty({ example: 'user uuid' })
+  @ApiProperty({ example: 'user_uuid' })
   @IsString()
   @IsOptional()
   userId?: string;
 
-  @ApiProperty({ example: 100000.0 })
-  @IsOptional()
+  @ApiProperty({ example: 0 })
   @Type(() => Number)
+  @IsNumber()
+  @IsPositive()
+  @IsOptional()
   amount?: number;
 
   @ApiProperty({

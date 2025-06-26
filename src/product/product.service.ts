@@ -53,59 +53,18 @@ export class ProductService {
     try {
       const product = await this.prisma.product.findUnique({
         where: { id },
-        select: {
-          id: true,
-          title: true,
-          sellPrice: true,
-          buyPrice: true,
-          quantity: true,
-          units: true,
-          isActive: true,
-          comment: true,
-          image: true,
+        omit: {
+          categoryId: true,
+          userId: true,
+        },
+        include: {
           category: true,
-          user: true,
-          Purchase: {
-            select: {
-              id: true,
-              quantity: true,
-              buyPrice: true,
-              comment: true,
-              user: {
-                select: {
-                  id: true,
-                  fullName: true,
-                  phone: true,
-                  role: true,
-                  status: true,
-                  balance: true,
-                  avatar: true,
-                },
-              },
-              partner: {
-                select: {
-                  id: true,
-                  fullName: true,
-                  phone: true,
-                  isActive: true,
-                  balance: true,
-                  role: true,
-                  address: true,
-                  user: {
-                    select: {
-                      id: true,
-                      fullName: true,
-                      phone: true,
-                      role: true,
-                      status: true,
-                      balance: true,
-                      avatar: true,
-                    },
-                  },
-                },
-              },
+          user: {
+            omit: {
+              password: true,
             },
           },
+          Purchase: true,
         },
       });
       if (!product) throw new NotFoundException('Product not found!');

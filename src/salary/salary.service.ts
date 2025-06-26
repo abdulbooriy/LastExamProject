@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateSalaryDto } from './dto/create-salary.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateSalaryDto } from './dto/update-salary.dto';
 
 @Injectable()
 export class SalaryService {
@@ -8,6 +9,12 @@ export class SalaryService {
 
   async create(createSalaryDto: CreateSalaryDto) {
     try {
+      const finduser = await this.prisma.users.findUnique({
+        where: { id: createSalaryDto.userId },
+      });
+
+      if (!finduser) throw new BadRequestException('User not found');
+
       const new_salary = await this.prisma.salary.create({
         data: {
           userId: createSalaryDto.userId,
@@ -17,8 +24,8 @@ export class SalaryService {
       });
 
       await this.prisma.users.update({
-        data: { balance: createSalaryDto.amount },
         where: { id: createSalaryDto.userId },
+        data: { balance: { increment: createSalaryDto.amount } },
       });
 
       return new_salary;
@@ -38,10 +45,30 @@ export class SalaryService {
 
   async findOne(id: string) {
     try {
-      const salary = await this.prisma.salary.findFirst({ where: { id } });
+      const salary = await this.prisma.salary.findFirst({
+        where: { id },
+        select: {
+          id: true,
+          amount: true,
+          comment: true,
+          user: {
+            omit: {
+              password: true,
+            },
+          },
+        },
+      });
       if (!salary) throw new BadRequestException('Salary not found!');
 
       return salary;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async update(updateSalaryDto: UpdateSalaryDto) {
+    try {
+      console.log(updateSalaryDto);
     } catch (error) {
       throw new BadRequestException(error.message);
     }

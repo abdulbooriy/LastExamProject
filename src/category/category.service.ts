@@ -36,17 +36,8 @@ export class CategoryService {
         where: { id },
         include: {
           Product: {
-            select: {
-              id: true,
-              title: true,
-              sellPrice: true,
-              buyPrice: true,
-              quantity: true,
-              units: true,
-              isActive: true,
-              comment: true,
-              image: true,
-              userId: true,
+            omit: {
+              categoryId: true,
             },
           },
         },
