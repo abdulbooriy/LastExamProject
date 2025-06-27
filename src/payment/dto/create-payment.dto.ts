@@ -32,7 +32,7 @@ export class CreatePaymentDto {
   @ApiProperty({ example: 0 })
   @Type(() => Number)
   @IsNumber()
-  @IsPositive()
+  // @IsPositive()
   amount: number;
 
   @ApiProperty({ example: 'comment for payment' })

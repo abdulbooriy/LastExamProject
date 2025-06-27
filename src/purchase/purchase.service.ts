@@ -31,12 +31,17 @@ export class PurchaseService {
       });
       if (!checkPartner) throw new NotFoundException('Partner not found!');
 
-      const totalCost = Number(findProduct.quantity) * Number(createPurchaseDto.buyPrice);
+      const totalCost =
+        Number(findProduct.quantity) * Number(createPurchaseDto.buyPrice);
 
-      const productBuyPrice = Number(findProduct.quantity) + Number(findProduct.buyPrice);
-      const purchseBuyPrice = Number(createPurchaseDto.quantity) + Number(createPurchaseDto.buyPrice);
+      const productBuyPrice =
+        Number(findProduct.quantity) + Number(findProduct.buyPrice);
+      const purchseBuyPrice =
+        Number(createPurchaseDto.quantity) + Number(createPurchaseDto.buyPrice);
 
-      const totalQuantity = Number(findProduct.quantity) + Number(createPurchaseDto.quantity);
+      const totalQuantity =
+        Number(findProduct.quantity) + Number(createPurchaseDto.quantity);
+
       const totalPrice = (productBuyPrice + purchseBuyPrice) / totalQuantity;
 
       const created_purchase = await this.prisma.$transaction(async (tx) => {
@@ -67,7 +72,7 @@ export class PurchaseService {
         return new_purchase;
       });
 
-      return { data: created_purchase, totalPrice };
+      return { data: created_purchase };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
