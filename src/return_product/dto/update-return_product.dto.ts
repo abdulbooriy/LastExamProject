@@ -15,7 +15,7 @@ export class UpdateReturnProductDto extends PartialType(
   @IsOptional()
   isNew?: boolean;
 
-  @ApiProperty({ example: 'reason for return_product' })
+  @ApiProperty({ example: 'reason for product' })
   @IsString()
   @IsOptional()
   reason?: string;

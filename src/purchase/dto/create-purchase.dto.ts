@@ -22,18 +22,18 @@ export class CreatePurchaseDto {
   @ApiProperty({ example: 0 })
   @Type(() => Number)
   @IsNumber()
-  // @IsNotEmpty()
-  // @IsPositive()
+  @IsPositive()
+  @IsOptional()
   quantity: number;
 
   @ApiProperty({ example: 0 })
   @Type(() => Number)
   @IsNumber()
-  // @IsNotEmpty()
-  // @IsPositive()
+  @IsPositive()
+  @IsOptional()
   buyPrice: number;
 
-  @ApiProperty({ example: 'comment for purchase' })
+  @ApiProperty({ example: 'comment for purchase', required: false })
   @IsString()
   @IsOptional()
   comment?: string;

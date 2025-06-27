@@ -31,18 +31,16 @@ export class PurchaseService {
       });
       if (!checkPartner) throw new NotFoundException('Partner not found!');
 
-      const totalCost =
-        Number(findProduct.quantity) * Number(createPurchaseDto.buyPrice);
+      const quantity = Number(createPurchaseDto.quantity);
+      const buyPrice = Number(createPurchaseDto.buyPrice);
+      const oldQuantity = Number(findProduct.quantity);
+      const oldBuyPrice = Number(findProduct.buyPrice);
 
-      const productBuyPrice =
-        Number(findProduct.quantity) + Number(findProduct.buyPrice);
-      const purchseBuyPrice =
-        Number(createPurchaseDto.quantity) + Number(createPurchaseDto.buyPrice);
-
-      const totalQuantity =
-        Number(findProduct.quantity) + Number(createPurchaseDto.quantity);
-
-      const totalPrice = (productBuyPrice + purchseBuyPrice) / totalQuantity;
+      const totalCost = oldQuantity * buyPrice;
+      const productBuyPrice = oldQuantity * oldBuyPrice;
+      const purchaseBuyPrice = quantity * buyPrice;
+      const totalQuantity = oldQuantity + quantity;
+      const totalPrice = (productBuyPrice + purchaseBuyPrice) / totalQuantity;
 
       const created_purchase = await this.prisma.$transaction(async (tx) => {
         const new_purchase = await tx.purchase.create({
@@ -50,17 +48,18 @@ export class PurchaseService {
             userId: user?.id,
             partnerId: createPurchaseDto.partnerId,
             productId: createPurchaseDto.productId,
-            quantity: Number(createPurchaseDto.quantity),
-            buyPrice: Number(
-              createPurchaseDto.buyPrice
-                ? createPurchaseDto.buyPrice
-                : findProduct.buyPrice,
-            ),
+            quantity: oldQuantity ?? quantity,
+            buyPrice: oldBuyPrice ?? buyPrice,
             comment: createPurchaseDto.comment,
           },
         });
 
-        await this.prisma.partners.update({
+        await tx.product.update({
+          where: { id: createPurchaseDto.productId },
+          data: { buyPrice: totalPrice },
+        });
+
+        await tx.partners.update({
           where: { id: createPurchaseDto.partnerId },
           data: {
             balance: {
@@ -72,7 +71,7 @@ export class PurchaseService {
         return new_purchase;
       });
 
-      return { data: created_purchase };
+      return { data: created_purchase, totalCost };
     } catch (error) {
       throw new BadRequestException(error.message);
     }

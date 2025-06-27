@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateReturnProductDto } from './dto/create-return_product.dto';
 import { UpdateReturnProductDto } from './dto/update-return_product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -9,6 +13,21 @@ export class ReturnProductService {
 
   async create(createReturnProductDto: CreateReturnProductDto) {
     try {
+      const findContract = await this.prisma.contract.findUnique({
+        where: { id: createReturnProductDto.contractId },
+      });
+      if (!findContract) throw new NotFoundException('Contract not found!');
+
+      if (createReturnProductDto.isNew === false) {
+        const updated_partner_balance = await this.prisma.partners.update({
+          where: { id: findContract.partnerId },
+          data: {
+            balance: {
+              increment: findContract.sellPrice,
+            },
+          },
+        });
+      }
     } catch (error) {
       throw new BadRequestException(error.message);
     }

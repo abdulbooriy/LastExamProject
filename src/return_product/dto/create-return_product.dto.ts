@@ -12,7 +12,7 @@ export class CreateReturnProductDto {
   @IsNotEmpty()
   isNew: boolean;
 
-  @ApiProperty({ example: 'reason for return_product' })
+  @ApiProperty({ example: 'reason for product' })
   @IsString()
   @IsOptional()
   reason: string;

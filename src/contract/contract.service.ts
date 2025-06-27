@@ -40,18 +40,15 @@ export class ContractService {
             productId: createContractDto.productId,
             userId: user.id,
             quantity: Number(createContractDto.quantity),
-            sellPrice: Number(product?.sellPrice),
-            duration: createContractDto.duration
-              ? createContractDto.duration
-              : Number(category.time),
+            sellPrice: Number(product.sellPrice ?? 0),
+            duration: createContractDto.duration ?? Number(category.time),
           },
         });
 
         await tx.partners.update({
           where: { id: createContractDto.partnerId },
           data: {
-            balance: (partner.balance -=
-              new_contract.quantity * Number(new_contract.sellPrice)),
+            balance: partner.balance - (new_contract.quantity * Number(new_contract.sellPrice))
           },
         });
 
