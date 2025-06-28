@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
+import { CreateProductDto, ProductUnits } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as fs from 'fs';
@@ -29,6 +29,14 @@ export class ProductService {
       });
       if (!findUser)
         throw new BadRequestException('This userId is not exists!');
+
+      const validUnits = Object.values(ProductUnits);
+      for (const unit of createProductDto.units) {
+        if (!validUnits.includes(createProductDto.units))
+          throw new BadRequestException(
+            `The provided unit (${createProductDto.units}) is invalid! Only the following units are allowed. KG, LITER, PIECE, METER`,
+          );
+      }
 
       const products = await this.prisma.product.create({
         data: createProductDto,

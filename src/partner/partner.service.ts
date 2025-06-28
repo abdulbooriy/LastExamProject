@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreatePartnerDto } from './dto/create-partner.dto';
+import { CreatePartnerDto, PartnerRole } from './dto/create-partner.dto';
 import { UpdatePartnerDto } from './dto/update-partner.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Request } from 'express';
@@ -29,6 +29,14 @@ export class PartnerService {
         where: { id: user.id },
       });
       if (!checkUserId) throw new NotFoundException('user not found!');
+
+      if (
+        createPartnerDto.role !== PartnerRole.CUSTOMER &&
+        createPartnerDto.role !== PartnerRole.SELLER
+      )
+        throw new BadRequestException(
+          `The provided (${createPartnerDto.role}) is invalid! Only the following roles allowd. CUSTOMER, SELLER`,
+        );
 
       const new_partners = await this.prisma.partners.create({
         data: {

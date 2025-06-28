@@ -26,13 +26,14 @@ export class CreatePaymentDto {
 
   @ApiProperty({ example: 'debt_uuid' })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   debtId: string;
 
   @ApiProperty({ example: 0 })
   @Type(() => Number)
   @IsNumber()
-  // @IsPositive()
+  @IsPositive()
+  @IsNotEmpty()
   amount: number;
 
   @ApiProperty({ example: 'comment for payment' })

@@ -27,33 +27,35 @@ export class PaymentService {
       if (!findDebt) throw new NotFoundException('Debt not found!');
 
       const created_payment = await this.prisma.$transaction(async (tx) => {
-        const new_payment = await tx.payment.create({
-          data: {
-            partnerId: createPaymentDto.partnerId,
-            debtId: createPaymentDto.debtId,
-            userId: user?.id,
-            amount: Number(findDebt.total),
-            comment: createPaymentDto.comment,
-            paymentType: createPaymentDto.paymentType,
-            type: createPaymentDto.type,
-          },
-        });
-
-        const changebalance =
-          createPaymentDto.type === 'IN'
-            ? createPaymentDto.amount + createPaymentDto.amount
-            : createPaymentDto.amount - createPaymentDto.amount;
-
-        const updated_partner = await tx.partners.update({
-          where: { id: createPaymentDto.partnerId },
-          data: {
-            balance: {
-              increment: changebalance,
+        if (createPaymentDto.type === 'IN') {
+          const new_payment = await tx.payment.create({
+            data: {
+              partnerId: createPaymentDto.partnerId,
+              debtId: createPaymentDto.debtId,
+              userId: user?.id,
+              amount: Number(createPaymentDto.amount),
+              comment: createPaymentDto.comment,
+              paymentType: createPaymentDto.paymentType,
+              type: createPaymentDto.type,
             },
-          },
-        });
+          });
 
-        return new_payment;
+          await tx.debt.update({
+            where: { id: createPaymentDto.debtId },
+            data: {
+              total: findDebt.total - new_payment.amount,
+              duration: findDebt.duration - findDebt.total,
+              status: 'PAID',
+            },
+          });
+
+          await tx.partners.update({
+            where: { id: createPaymentDto.partnerId },
+            data: { balance: { increment: createPaymentDto.amount } },
+          });
+
+          return new_payment;
+        }
       });
 
       return created_payment;
@@ -72,8 +74,13 @@ export class PaymentService {
 
   async findOne(id: string) {
     try {
-      const payment = await this.prisma.payment.findFirst({ where: { id } });
+      const payment = await this.prisma.payment.findFirst({
+        where: { id },
+        include: { debt: true, partner: true },
+      });
       if (!payment) throw new NotFoundException('Payment not found!');
+
+      return payment;
     } catch (error) {
       throw new BadRequestException(error.message);
     }

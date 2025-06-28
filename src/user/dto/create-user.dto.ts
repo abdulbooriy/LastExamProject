@@ -5,6 +5,7 @@ import {
   IsNumber,
   IsOptional,
   IsPhoneNumber,
+  IsPositive,
   IsString,
 } from 'class-validator';
 
@@ -44,6 +45,8 @@ export class CreateUserDto {
   @ApiProperty({ example: 0, default: 0 })
   @Type(() => Number)
   @IsNumber()
+  @IsPositive()
+  @IsOptional()
   balance: number;
 
   @ApiProperty({ example: 'user avatar image url' })

@@ -48,15 +48,21 @@ export class ContractService {
         await tx.partners.update({
           where: { id: createContractDto.partnerId },
           data: {
-            balance: partner.balance - (new_contract.quantity * Number(new_contract.sellPrice))
+            balance:
+              partner.balance -
+              new_contract.quantity * Number(new_contract.sellPrice),
           },
         });
+
+        const totalAmount = new_contract.quantity * Number(new_contract.sellPrice);
+        const monthlyPayment = Math.floor(totalAmount / new_contract.duration)
 
         await tx.debt.create({
           data: {
             contractId: new_contract?.id,
             total: new_contract?.quantity * Number(new_contract.sellPrice),
             duration: new_contract.duration,
+            monthlyPaymentAmount: monthlyPayment
           },
         });
 

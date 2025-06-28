@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, UserRole } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { join } from 'path';
@@ -25,6 +25,14 @@ export class UserService {
           `This ${checkUser?.phone} is already in use!`,
         );
 
+      if (
+        createUserDto.role !== UserRole.OWNER &&
+        createUserDto.role !== UserRole.STAFF
+      )
+        throw new BadRequestException(
+          `This ${createUserDto.role} role is no't available!`,
+        );
+
       const hashPass = await bcrypt.hash(createUserDto.password, 10);
 
       const new_user = await this.prisma.users.create({
@@ -34,7 +42,7 @@ export class UserService {
           password: hashPass,
           role: createUserDto.role,
           status: createUserDto.status,
-          balance: Number(createUserDto?.balance),
+          balance: Number(createUserDto?.balance ?? 0),
           avatar: createUserDto.avatar,
         },
       });
